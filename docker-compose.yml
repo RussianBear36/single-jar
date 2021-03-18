@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  javamelody:
+    image: javamelody
+    ports:
+      - 1337:1337
+
+  postgres:
+    image: library/postgres:12.6
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=javamelodydb
+    ports:
+    - 5433:5432
+
+  sales:
+    image: cuba-sample-sales
+    environment:
+      - CUBA_DATASOURCE_HOST=postgres
+      - CUBA_DATASOURCE_PORT=5432
+      - CUBA_DATASOURCE_PASSWORD=1234
+      - CUBA_DATASOURCE_USER=postgres
+      - CUBA_DATASOURCE_DBNAME=javamelodydb
+      - CUBA_WEBHOSTNAME=sales-core
+      - CUBA_WEBPORT=8080
+      - CUBAJM_MONITORINGSERVERURL=http://javamelody:1337
+      - CUBA_CONNECTIONURLLIST=http://sales-core:8080/app-core
+    ports:
+      - 8090:8080
